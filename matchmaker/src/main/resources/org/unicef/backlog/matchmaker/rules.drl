@@ -1,0 +1,19 @@
+package org.unicef.backlog.matchmaker
+
+import org.unicef.backlog.matchmaker.domain.Project;
+import org.unicef.backlog.matchmaker.domain.ProjectSkill;
+import org.unicef.backlog.matchmaker.domain.Volunteer;
+import org.unicef.backlog.matchmaker.domain.VolunteerSkill;
+import org.unicef.backlog.matchmaker.domain.VolunteerProjectMatch;
+
+rule "matches volunteer according to skills"
+    when
+    $projectSkill: ProjectSkill($project: project, $skill: skill)
+    $volunteer: Volunteer()
+    $volunteerSkill: VolunteerSkill(volunteer == $volunteer, skill == $skill)
+
+    then
+    VolunteerProjectMatch $match = new VolunteerProjectMatch($volunteer, $project);
+    insertLogical($match);
+    System.out.println($match);
+end

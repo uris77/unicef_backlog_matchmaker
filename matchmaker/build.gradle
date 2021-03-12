@@ -1,0 +1,77 @@
+import com.github.jengelman.gradle.plugins.shadow.transformers.AppendingTransformer
+
+buildscript {
+	ext {
+		droolsVersion = "7.49.0.Final"
+		kotestVersion = "4.4.1"
+		log4jVersion = "2.14.0"
+		springBootVersion = '2.3.3.RELEASE'
+		ktor_version = '1.5.1'
+	}
+
+}
+
+plugins {
+	id 'application'
+    id 'java'
+    id 'org.jetbrains.kotlin.jvm' version "${kotlinVersion}"
+	id 'com.github.johnrengelman.shadow' version "6.1.0"
+}
+
+
+
+mainClassName = "io.ktor.server.netty.EngineMain"
+
+group 'org.unicef.backlog.matchmaker'
+version '1.0.0-SNAPSHOT'
+
+shadowJar {
+	manifest {
+		attributes 'Main-Class': mainClassName
+	}
+	mergeServiceFiles()
+	transform(AppendingTransformer) {
+		resource = "META-INF/kie.conf"
+	}
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+	// Rules Engine
+	implementation "org.kie:kie-api:$droolsVersion"
+	implementation "org.drools:drools-compiler:$droolsVersion"
+	implementation "org.drools:drools-model-compiler:$droolsVersion"
+	implementation "org.drools:drools-canonical-model:$droolsVersion"
+	implementation "org.drools:drools-mvel:$droolsVersion"
+
+
+	// Ktor
+	compile "io.ktor:ktor-server-netty:$ktor_version"
+	compile "io.ktor:ktor-gson:$ktor_version"
+	compile "ch.qos.logback:logback-classic:$logback_version"
+
+	// Firebase
+	implementation "com.google.firebase:firebase-admin:$firebase_version"
+
+	// Testing libraries
+	testImplementation "io.kotest:kotest-runner-junit5:$kotestVersion"
+	testImplementation "io.kotest:kotest-assertions-core:$kotestVersion"
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+}
+
+compileKotlin {
+	kotlinOptions.jvmTarget = "1.8"
+	kotlinOptions.languageVersion = "1.5"
+}
+compileTestKotlin {
+	kotlinOptions.jvmTarget = "1.8"
+	kotlinOptions.languageVersion = "1.5"
+}
+
+test {
+    useJUnitPlatform()
+}
+
