@@ -2,3 +2,5 @@
 matchmaker/perms.json
 matchmaker/build
 matchmaker/.gradle
+web/node_modules
+.DS_Store
