@@ -65,7 +65,12 @@ const MatchedProjects = () => {
         )}
         {!projectData.loading && !projectData.error && (
           <Box>
-            <Projects projects={projectData.projects} />
+            {projectData.projects.length > 0 && (
+              <Projects projects={projectData.projects} />
+            )}
+            {projectData.projects.length == 0 && (
+              <Text size={'xlarge'}>No Projects Matched Your Skills.</Text>
+            )}
           </Box>
         )}
       </Box>
