@@ -15,6 +15,14 @@ matches a set of skills. The persona for the frontend is any person volunteering
 <img src="https://storage.googleapis.com/openstep_public/poc_architecture.png" />
 
 
+### Creating Stubbed Data
+You need to stub some data in `Firebase` for the following collections:
+- organizations: {name, repository, website}
+- projects: {name, organization (the id of the pertinent organization)}
+- projectSkills: {skill, project (the id of the pertinent project)}
+- volunteers: {email: volunteer1@email.com, name: "Any Name"}. Note that the email has to be `volunteer1@email.com`. You can add skills via the `matchmaker` API
+using the `/updateSkills` endpoint.
+
 ## Matchmaking Engine
 
 The Matchmaking Engine is a JVM application that uses [Drools](https://drools.org) as its `Rules Engine`.
@@ -47,10 +55,37 @@ __Requirements__:
 6. Deploy to Cloud Run: `make deployCloudRun`
 7. If it deploys successfully, a url will be printed that is the endpoint for this service.
 
+Run the `matchmaker` locally with: `docker run -p 8080:8080 -e GOOGLE_APPLICATION_CREDENTIALS=/app/creds.json  matchmaker-1.0`.
+This will create a docker container and expose port `8080`.
+
+
 ### Endpoints
 1. __POST /updateSkills__ : post a list of strings that represent the skills you are volunteering for.
 2. __POST /matchmake__ : does not require a body. It pulls the data from Firebase and instantiates the `Rules Engine` with this data. The matches found are pushed back to Firebase.
 3. __GET /matched__ : retrieves the projects that match your sets of skills.
 
-## Web Front End
+## Web Frontend
+The frontend is a simple React application. It's purpose is to exercise the `Rules Engine`. It is an isolated use case of how volunteers would 
+register and provide their skills. The `Rules Engine` will then use these skills to `match` the volunteer with a project. However, in reality,
+this would be automated at a periodic interval. The `matchmaking engine` will be triggered via a cronjob and generating a set of matches,
+which would then be handed over to a `notification service` that would send an email with a list of projects to the volunteers.
+
+### Structure
+- __api__: contains data models and utilities used to interact with the `matchmaker`.
+- __components__: React components used by `pages`.
+- __pages__: the actual screens rendered
+- __providers__: state that is passed down from the root component to its children.
+- __models__ : a stubbed list of data that would otherwise be available in some database.
+
+### Running Locally
+- Start the `matchmaker` locally.
+- Bootup the frontend locally with `yarn start`.
+- You can now view the application on `http://localhost:3000`.
+
+### Deploying
+You can deploy to `Firebase Hosting`. Create a `web application` in your `Firebase` project and follow the instructions they provide
+for initializing an application.
+Edit the `.env.production` file and replace the value for `REACT_APP_API_URL` with the url for your deployment of the `matchmaker`.
+Then build the project: `yarn build`.
+And deploy: `firebase deploy --only hosting:thep-name-of-the-project-on-firebase`.
 
