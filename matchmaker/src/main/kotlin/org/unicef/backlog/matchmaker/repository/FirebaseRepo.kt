@@ -128,4 +128,9 @@ class FirebaseRepo {
         write.get()
     }
 
+    fun fetchVolunteer(): VolunteerDao? {
+        val doc = db.collection("volunteers").document(volunteerEmail).get()
+        return doc.get().toObject(VolunteerDao::class.java)
+    }
+
 }
