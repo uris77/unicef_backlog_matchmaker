@@ -13,8 +13,9 @@ const Header = (props: HeaderProps) => {
             flex={false}
             gap={'medium'}
             pad={'small'}
-            height={'small'}
+            height={'xsmall'}
             align={'center'}
+            justify={'center'}
             margin={{
                 left: 'small',
                 bottom: 'xxsmall',
@@ -22,7 +23,7 @@ const Header = (props: HeaderProps) => {
                 top: 'small',
             }}
         >
-            <Heading level={1}>Unicef Digital Public Goods Project Matcher</Heading>
+            <Heading level={2}>Unicef Digital Public Goods Project Matcher</Heading>
             {props.children}
         </Box>
     );
